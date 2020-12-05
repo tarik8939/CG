@@ -51,39 +51,46 @@ namespace CG
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            double zoom = 1, moveX = 0, moveY = 0;
+            double newRe, newIm, oldRe, oldIm;
+            double h = pictureBox1.Height;
+            double w = pictureBox1.Width;
+            double cRe, cIm;
+            cRe = -0.70176;
+            cIm = -0.3842;
+            // cRe = 0.27334;
+            // cIm = 0.00742;
             Bitmap bmp = new Bitmap(pictureBox1.Width,pictureBox1.Height);
             for (int x = 0; x < pictureBox1.Width; x++)
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    double a = (double) (x - (pictureBox1.Width / 2)) / (double) (pictureBox1.Width / 4);
-                    double b = (double) (y - (pictureBox1.Height / 2)) / (double) (pictureBox1.Height / 4);
-                    Numbers c = new Numbers(a,b);
-                    Numbers z = new Numbers(0,0);
+                    newRe = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
+                    newIm = (y - h / 2) / (0.5 * zoom * h) + moveY;
+                    // newRe = (double) (x - (pictureBox1.Width / 2)) / (double) (pictureBox1.Width / 4); 
+                    // newIm= (double) (y - (pictureBox1.Height / 2)) / (double) (pictureBox1.Height / 4);
                     int it = 0;
                     do
                     {
                         it++;
-                         z.Sqr();
-                         z.Add(c);
-                         var r = Math.Cosh((c.a*c.a)+(c.b*c.b));
-                         if ( z.Magn()  > 2)
-                         {
-                             break;
-                         }
+                        //Запоминаем значение предыдущей итерации
+                        oldRe = newRe;
+                        oldIm = newIm;
+ 
+                        // в текущей итерации вычисляются действительная и мнимая части 
+                        newRe = oldRe * oldRe - oldIm * oldIm + cRe;
+                        newIm = 2 * oldRe * oldIm + cIm;
+                        if ( (newRe * newRe + newIm * newIm)  > 4) 
+                        {
+                            break;
+                        }
 
-                        var abs = Math.Sinh(z.Magn());
                     } while (it < 100 );
-                    bmp.SetPixel(x,y, it < 100 ? Color.FromArgb(it,it,it) : Color.FromArgb(255,255,255));
-
+                    bmp.SetPixel(x,y,Color.FromArgb(255, (it * 235) % 255, (it * 94) % 255, (it * 54) % 255));
                 }
 
                 pictureBox1.Image = bmp;
             }
-            
-            //frame.SetPixel(x,y,Color.FromArgb(255, (it * 9) % 255, 0, (it * 9) % 255));
-
-  
         }
         private void Fractal_Load(object sender, EventArgs e)
         {
