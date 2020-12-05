@@ -67,6 +67,7 @@ namespace CG
             // Country.ShowDialog();
             Fractal form = new Fractal();
             form.Show();
+
         }
     }
 }

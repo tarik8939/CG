@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
+using System.Numerics;
 
 namespace CG
 {
     public partial class Fractal : Form
     {
+
+
         public Fractal()
         {
             InitializeComponent();
@@ -22,112 +26,213 @@ namespace CG
             Rectangle rc = new Rectangle(this.ClientSize.Width - cGrip, this.ClientSize.Height - cGrip, cGrip, cGrip);
             ControlPaint.DrawSizeGrip(e.Graphics, this.BackColor, rc);
             rc = new Rectangle(0, 0, this.ClientSize.Width, cCaption);
-            
+
             // Color myColor = Color.FromArgb(50,0,160,255);
-            Color myColor = System.Drawing.Color.FromArgb(50,160,255);
-            SolidBrush myBrush = new SolidBrush(myColor); 
-            
+            Color myColor = System.Drawing.Color.FromArgb(50, 160, 255);
+            SolidBrush myBrush = new SolidBrush(myColor);
+
             e.Graphics.FillRectangle(myBrush, rc);
 
         }
-        protected override void WndProc(ref Message m) {
-            if (m.Msg == 0x84) {  // Trap WM_NCHITTEST
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x84)
+            {
+                // Trap WM_NCHITTEST
                 Point pos = new Point(m.LParam.ToInt32());
                 pos = this.PointToClient(pos);
-                if (pos.Y < cCaption) {
-                    m.Result = (IntPtr)2;  // HTCAPTION
+                if (pos.Y < cCaption)
+                {
+                    m.Result = (IntPtr) 2; // HTCAPTION
                     return;
                 }
-                if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip) {
-                    m.Result = (IntPtr)17; // HTBOTTOMRIGHT
+
+                if (pos.X >= this.ClientSize.Width - cGrip && pos.Y >= this.ClientSize.Height - cGrip)
+                {
+                    m.Result = (IntPtr) 17; // HTBOTTOMRIGHT
                     return;
                 }
             }
+
             base.WndProc(ref m);
         }
+
         private void label1_Click(object sender, EventArgs e)
         {
             Close();
         }
+
+        public void DrowshX()
+        {
+            int w = pictureBox1.Width;
+            int h = pictureBox1.Height;
+            const double zoom = 0.45;
+            const int maxiter = 200;
+            const int moveX = 0;
+            const int moveY = 0;
+            const double cX = 0;
+            const double cY = 0;
+            double zx, zy, tmp;
+            int i;
+
+            var colors = (from c in Enumerable.Range(0, 256)
+                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
+
+            var bitmap = new Bitmap(w, h);
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
+                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
+                    Complex c = new Complex(cX, cY);
+                    Complex z = new Complex(zx, zy);
+                    i = maxiter;
+                    while (Complex.Abs(z) < 4 && i > 1)
+                    {
+                        z = Complex.Sinh(z * z);
+                        z += c;
+                        i -= 1;
+                    }
+
+                    // bitmap.SetPixel(x, y, colors[i]);
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                }
+            }
+
+            pictureBox1.Image = bitmap;
+            //bmp.SetPixel(x,y,Color.FromArgb(255, (it * 15) % 255, (it * 9) % 255, (it * 9) % 255));
+        }
+
+        public void DrowchX()
+        {
+            int w = pictureBox1.Width;
+            int h = pictureBox1.Height;
+            const double zoom = 0.5;
+            const int maxiter = 200;
+            const int moveX = 0;
+            const int moveY = 0;
+            const double cX = 0;
+            const double cY = 0;
+            double zx, zy, tmp;
+            int i;
+
+            var colors = (from c in Enumerable.Range(0, 256)
+                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
+
+            var bitmap = new Bitmap(w, h);
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
+                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
+                    Complex c = new Complex(cX, cY);
+                    Complex z = new Complex(zx, zy);
+                    i = maxiter;
+                    while (Complex.Abs(z) < 4 && i > 1)
+                    {
+                        z = Complex.Cosh(z * z);
+                        z += c;
+                        i -= 1;
+                    }
+
+                    //bitmap.SetPixel(x, y, colors[i]);
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                }
+            }
+
+            pictureBox1.Image = bitmap;
+        }
+
+        public void DrowSinxCosX()
+        {
+            int w = pictureBox1.Width;
+            int h = pictureBox1.Height;
+            const int maxiter = 50;
+            const double zoom = 0.2;
+            const int moveX = 0;
+            const int moveY = 0;
+            const double cX = 0;
+            const double cY = 0;
+            double zx, zy, tmp;
+            int i;
+
+            var colors = (from c in Enumerable.Range(0, 256)
+                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
+
+            var bitmap = new Bitmap(w, h);
+            for (int x = 0; x < size.Width; x++)
+            {
+                for (int y = 0; y < size.Height; y++)
+                {
+                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
+                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
+                    Complex c = new Complex(cX, cY);
+                    Complex z = new Complex(zx, zy);
+                    i = maxiter;
+                    while (Complex.Abs(z) < 4 && i > 1)
+                    {
+                        z = Complex.Cos(z) * Complex.Sin(z);
+                        z += c;
+                        i -= 1;
+                    }
+                    //bitmap.SetPixel(x, y, colors[i]);
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                }
+            }
+
+            pictureBox1.Image = bitmap;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            double zoom = 1, moveX = 0, moveY = 0;
-            double newRe, newIm, oldRe, oldIm;
-            double h = pictureBox1.Height;
-            double w = pictureBox1.Width;
-            double cRe, cIm;
-            cRe = -0.70176;
-            cIm = -0.3842;
-            // cRe = 0.27334;
-            // cIm = 0.00742;
-            Bitmap bmp = new Bitmap(pictureBox1.Width,pictureBox1.Height);
-            for (int x = 0; x < pictureBox1.Width; x++)
+            if (comboBox1.SelectedIndex == 0)
             {
-                for (int y = 0; y < pictureBox1.Height; y++)
-                {
-                    newRe = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
-                    newIm = (y - h / 2) / (0.5 * zoom * h) + moveY;
-                    // newRe = (double) (x - (pictureBox1.Width / 2)) / (double) (pictureBox1.Width / 4); 
-                    // newIm= (double) (y - (pictureBox1.Height / 2)) / (double) (pictureBox1.Height / 4);
-                    int it = 0;
-                    do
-                    {
-                        it++;
-                        //Запоминаем значение предыдущей итерации
-                        oldRe = newRe;
-                        oldIm = newIm;
- 
-                        // в текущей итерации вычисляются действительная и мнимая части 
-                        newRe = oldRe * oldRe - oldIm * oldIm + cRe;
-                        newIm = 2 * oldRe * oldIm + cIm;
-                        if ( (newRe * newRe + newIm * newIm)  > 4) 
-                        {
-                            break;
-                        }
-
-                    } while (it < 100 );
-                    bmp.SetPixel(x,y,Color.FromArgb(255, (it * 235) % 255, (it * 94) % 255, (it * 54) % 255));
-                }
-
-                pictureBox1.Image = bmp;
+                DrowshX();
+            }
+            else if (comboBox1.SelectedIndex == 1)
+            {
+                DrowchX();
+            }
+            else if (comboBox1.SelectedIndex == 2)
+            {
+                DrowSinxCosX();
             }
         }
-        private void Fractal_Load(object sender, EventArgs e)
-        {
-            
-        }
-    }
 
-    
-    public class Numbers
-    {
-        public double a;
-        public double b;
-
-        public Numbers(double a, double b)
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.a = a;
-            this.b = b;
+            if (comboBox1.SelectedIndex == 0)
+            {
+                // Fractal2 form = new Fractal2();
+                // form.Show();
+            }
         }
 
-        public void Sqr()
-        {
-            double tmp = (a * a) - (b * b);
-            b = 2.0d * a * b;
-            a = tmp;
-        }
 
-        public double Magn()
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            return Math.Sqrt((a * a) + (b * b));
+            int x = e.X,
+                y = e.Y;
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    hx = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
+                    hy = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
+                    SizeArea /= ScaleArea;
+                    button1_Click(null, null);
+                    break;
+                case MouseButtons.Right:
+                    x_ = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
+                    y_ = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
+                    SizeArea *= ScaleArea;
+                    button1_Click(null, null);
+                    break;
+                default:
+                    break;
+            }
         }
-
-        public void Add(Numbers c)
-        {
-            a += c.a;
-            b += c.b;
-        }
-        
-
     }
 }
