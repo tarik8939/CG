@@ -86,7 +86,9 @@ namespace CG
             const double cY = 0;
             double zx, zy, tmp;
             int i;
-
+            int red = readRed();
+            int green = readBlue();
+            int blue = readBlue();
             var colors = (from c in Enumerable.Range(0, 256)
                 select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
             size = pictureBox1.Size;
@@ -110,7 +112,7 @@ namespace CG
                     }
 
                     // bitmap.SetPixel(x, y, colors[i]);
-                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
                 }
             }
 
@@ -128,6 +130,9 @@ namespace CG
             const int moveY = 0;
             const double cX = 0;
             const double cY = 0;
+            int red = readRed();
+            int green = readBlue();
+            int blue = readBlue();
             double zx, zy, tmp;
             int i;
             size = pictureBox1.Size;
@@ -154,11 +159,13 @@ namespace CG
                     }
 
                     //bitmap.SetPixel(x, y, colors[i]);
-                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
+                    
                 }
             }
 
             pictureBox1.Image = bitmap;
+            MessageBox.Show(hx.ToString());
         }
 
         public void DrowSinxCosX()
@@ -171,6 +178,9 @@ namespace CG
             const int moveY = 0;
             const double cX = 0;
             const double cY = 0;
+            int red = readRed();
+            int green = readBlue();
+            int blue = readBlue();
             double zx, zy, tmp;
             int i;
             size = pictureBox1.Size;
@@ -197,7 +207,8 @@ namespace CG
                         i -= 1;
                     }
                     //bitmap.SetPixel(x, y, colors[i]);
-                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * 15) % 255, (i * 9) % 255, (i * 9) % 255));
+                    bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
+                    //bitmap.SetPixel(x,y, i < 100 ? Color.FromArgb(i,i,i) : Color.FromArgb(255,255,255));
                 }
             }
 
@@ -208,15 +219,43 @@ namespace CG
         {
             if (comboBox1.SelectedIndex == 0)
             {
+                hx=0;
+                hx=0;
+                SizeArea=4.5;
                 DrowshX();
             }
             else if (comboBox1.SelectedIndex == 1)
             {
+                hx=0;
+                hx=0;
+                SizeArea=4.5;
                 DrowchX();
             }
             else if (comboBox1.SelectedIndex == 2)
             {
+                hx=0;
+                hx=0;
+                SizeArea=4.5;
                 DrowSinxCosX();
+            }
+        }
+
+        public void Drow()
+        {
+            if (comboBox1.SelectedIndex == 0)
+            {
+                DrowshX();
+                
+            }
+            else if (comboBox1.SelectedIndex == 1)
+            {
+                DrowchX();
+                
+            }
+            else if (comboBox1.SelectedIndex == 2)
+            {
+                DrowSinxCosX();
+                
             }
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -229,17 +268,32 @@ namespace CG
                     hx = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
                     hy = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
                     SizeArea /= ScaleArea;
-                    button1_Click(null, null);
+                    //button1_Click(null, null);
+                    Drow();
                     break;
                 case MouseButtons.Right:
                     x_ = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
                     y_ = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
                     SizeArea *= ScaleArea;
-                    button1_Click(null, null);
+                    //button1_Click(null, null);
+                    Drow();
                     break;
                 default:
                     break;
             }
+        }
+
+        public int readRed()
+        {
+            return (int) numericUpDown1.Value;
+        }
+        public int readGreen()
+        {
+            return (int) numericUpDown2.Value;
+        }
+        public int readBlue()
+        {
+            return (int) numericUpDown3.Value;
         }
     }
 }
