@@ -18,11 +18,21 @@ namespace CG
             this.FormBorderStyle = FormBorderStyle.None;
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
+
+            size = pictureBox1.Size;
         }
-        private const int cGrip = 16;      // Grip size
-        private const int cCaption = 32;   // Caption bar height;
-        
-        protected override void OnPaint(PaintEventArgs e) {
+
+        private const int cGrip = 16; // Grip size
+        private const int cCaption = 32; // Caption bar height;
+
+        private double hx = 0, hy = 0, x_, y_, n = 0;
+        private Size size;
+        private double ScaleArea = 4.5;
+        private double SizeArea = 4.5;
+
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
             Rectangle rc = new Rectangle(this.ClientSize.Width - cGrip, this.ClientSize.Height - cGrip, cGrip, cGrip);
             ControlPaint.DrawSizeGrip(e.Graphics, this.BackColor, rc);
             rc = new Rectangle(0, 0, this.ClientSize.Width, cCaption);
@@ -67,8 +77,9 @@ namespace CG
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
+
+            const int maxiter = 100;
             const double zoom = 0.45;
-            const int maxiter = 200;
             const int moveX = 0;
             const int moveY = 0;
             const double cX = 0;
@@ -78,16 +89,18 @@ namespace CG
 
             var colors = (from c in Enumerable.Range(0, 256)
                 select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
-
+            size = pictureBox1.Size;
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < w; x++)
             {
+                x_ = (hx-SizeArea/2)+x*(SizeArea/size.Width);
                 for (int y = 0; y < h; y++)
                 {
+                    y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
                     zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
                     zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
-                    Complex z = new Complex(zx, zy);
+                    Complex z = new Complex(x_, y_);
                     i = maxiter;
                     while (Complex.Abs(z) < 4 && i > 1)
                     {
@@ -110,26 +123,28 @@ namespace CG
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
             const double zoom = 0.5;
-            const int maxiter = 200;
+            const int maxiter = 100;
             const int moveX = 0;
             const int moveY = 0;
             const double cX = 0;
             const double cY = 0;
             double zx, zy, tmp;
             int i;
-
+            size = pictureBox1.Size;
             var colors = (from c in Enumerable.Range(0, 256)
                 select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
 
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < w; x++)
             {
+                x_ = (hx-SizeArea/2)+x*(SizeArea/size.Width);
                 for (int y = 0; y < h; y++)
                 {
+                    y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
                     zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
                     zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
-                    Complex z = new Complex(zx, zy);
+                    Complex z = new Complex(x_, y_);
                     i = maxiter;
                     while (Complex.Abs(z) < 4 && i > 1)
                     {
@@ -150,14 +165,15 @@ namespace CG
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            const int maxiter = 50;
-            const double zoom = 0.2;
+            const int maxiter = 100;
+            const double zoom = 0.5;
             const int moveX = 0;
             const int moveY = 0;
             const double cX = 0;
             const double cY = 0;
             double zx, zy, tmp;
             int i;
+            size = pictureBox1.Size;
 
             var colors = (from c in Enumerable.Range(0, 256)
                 select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
@@ -165,12 +181,14 @@ namespace CG
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < size.Width; x++)
             {
+                x_ = (hx-SizeArea/2)+x*(SizeArea/size.Width);
                 for (int y = 0; y < size.Height; y++)
                 {
+                    y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
                     zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
                     zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
-                    Complex z = new Complex(zx, zy);
+                    Complex z = new Complex(x_, y_);
                     i = maxiter;
                     while (Complex.Abs(z) < 4 && i > 1)
                     {
@@ -201,17 +219,6 @@ namespace CG
                 DrowSinxCosX();
             }
         }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBox1.SelectedIndex == 0)
-            {
-                // Fractal2 form = new Fractal2();
-                // form.Show();
-            }
-        }
-
-
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             int x = e.X,
