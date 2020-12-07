@@ -35,13 +35,9 @@ namespace CG
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown3)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -59,11 +55,11 @@ namespace CG
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Niagara Engraved", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (204)));
-            this.button1.Location = new System.Drawing.Point(1021, 671);
+            this.button1.Location = new System.Drawing.Point(1011, 224);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(114, 39);
             this.button1.TabIndex = 4;
-            this.button1.Text = "button1";
+            this.button1.Text = "Drow";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -86,32 +82,15 @@ namespace CG
             this.comboBox1.Size = new System.Drawing.Size(192, 24);
             this.comboBox1.TabIndex = 6;
             // 
-            // numericUpDown1
+            // button2
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(1011, 179);
-            this.numericUpDown1.Maximum = new decimal(new int[] {255, 0, 0, 0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 22);
-            this.numericUpDown1.TabIndex = 7;
-            this.numericUpDown1.Value = new decimal(new int[] {1, 0, 0, 0});
-            // 
-            // numericUpDown2
-            // 
-            this.numericUpDown2.Location = new System.Drawing.Point(1011, 217);
-            this.numericUpDown2.Maximum = new decimal(new int[] {255, 0, 0, 0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(120, 22);
-            this.numericUpDown2.TabIndex = 8;
-            this.numericUpDown2.Value = new decimal(new int[] {1, 0, 0, 0});
-            // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.Location = new System.Drawing.Point(1011, 258);
-            this.numericUpDown3.Maximum = new decimal(new int[] {255, 0, 0, 0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(120, 22);
-            this.numericUpDown3.TabIndex = 9;
-            this.numericUpDown3.Value = new decimal(new int[] {1, 0, 0, 0});
+            this.button2.Location = new System.Drawing.Point(1011, 163);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(120, 38);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Choose color";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Fractal
             // 
@@ -119,9 +98,7 @@ namespace CG
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (50)))), ((int) (((byte) (160)))), ((int) (((byte) (255)))));
             this.ClientSize = new System.Drawing.Size(1232, 753);
-            this.Controls.Add(this.numericUpDown3);
-            this.Controls.Add(this.numericUpDown2);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button1);
@@ -131,18 +108,14 @@ namespace CG
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Fractal";
             ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize) (this.numericUpDown3)).EndInit();
             this.ResumeLayout(false);
         }
 
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
         private System.Windows.Forms.PictureBox pictureBox1;
 
         #endregion

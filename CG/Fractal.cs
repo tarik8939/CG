@@ -29,6 +29,7 @@ namespace CG
         private Size size;
         private double ScaleArea = 4.5;
         private double SizeArea = 4.5;
+        private Color color = Color.Blue;
 
 
         protected override void OnPaint(PaintEventArgs e)
@@ -77,20 +78,13 @@ namespace CG
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-
-            const int maxiter = 100;
-            const double zoom = 0.45;
-            const int moveX = 0;
-            const int moveY = 0;
+            const int maxiter = 10;
             const double cX = 0;
             const double cY = 0;
-            double zx, zy, tmp;
             int i;
-            int red = readRed();
-            int green = readBlue();
-            int blue = readBlue();
-            var colors = (from c in Enumerable.Range(0, 256)
-                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
+            int red = color.R;
+            int green = color.G;
+            int blue = color.B;
             size = pictureBox1.Size;
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < w; x++)
@@ -99,8 +93,6 @@ namespace CG
                 for (int y = 0; y < h; y++)
                 {
                     y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
-                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
-                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
                     Complex z = new Complex(x_, y_);
                     i = maxiter;
@@ -110,35 +102,24 @@ namespace CG
                         z += c;
                         i -= 1;
                     }
-
-                    // bitmap.SetPixel(x, y, colors[i]);
                     bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
                 }
             }
-
             pictureBox1.Image = bitmap;
-            //bmp.SetPixel(x,y,Color.FromArgb(255, (it * 15) % 255, (it * 9) % 255, (it * 9) % 255));
         }
 
         public void DrowchX()
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            const double zoom = 0.5;
-            const int maxiter = 100;
-            const int moveX = 0;
-            const int moveY = 0;
+            const int maxiter = 10;
             const double cX = 0;
             const double cY = 0;
-            int red = readRed();
-            int green = readBlue();
-            int blue = readBlue();
-            double zx, zy, tmp;
+            int red = color.R;
+            int green = color.G;
+            int blue = color.B;
             int i;
             size = pictureBox1.Size;
-            var colors = (from c in Enumerable.Range(0, 256)
-                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
-
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < w; x++)
             {
@@ -146,8 +127,6 @@ namespace CG
                 for (int y = 0; y < h; y++)
                 {
                     y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
-                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
-                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
                     Complex z = new Complex(x_, y_);
                     i = maxiter;
@@ -157,37 +136,24 @@ namespace CG
                         z += c;
                         i -= 1;
                     }
-
-                    //bitmap.SetPixel(x, y, colors[i]);
                     bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
-                    
                 }
             }
-
             pictureBox1.Image = bitmap;
-            MessageBox.Show(hx.ToString());
         }
 
         public void DrowSinxCosX()
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            const int maxiter = 100;
-            const double zoom = 0.5;
-            const int moveX = 0;
-            const int moveY = 0;
+            const int maxiter = 10;
             const double cX = 0;
             const double cY = 0;
-            int red = readRed();
-            int green = readBlue();
-            int blue = readBlue();
-            double zx, zy, tmp;
+            int red = color.R;
+            int green = color.G;
+            int blue = color.B;
             int i;
             size = pictureBox1.Size;
-
-            var colors = (from c in Enumerable.Range(0, 256)
-                select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
-
             var bitmap = new Bitmap(w, h);
             for (int x = 0; x < size.Width; x++)
             {
@@ -195,8 +161,6 @@ namespace CG
                 for (int y = 0; y < size.Height; y++)
                 {
                     y_ = (hy-SizeArea/2)+y*(SizeArea/size.Height);
-                    zx = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
-                    zy = 1.0 * (y - h / 2) / (0.5 * zoom * h) + moveY;
                     Complex c = new Complex(cX, cY);
                     Complex z = new Complex(x_, y_);
                     i = maxiter;
@@ -206,12 +170,9 @@ namespace CG
                         z += c;
                         i -= 1;
                     }
-                    //bitmap.SetPixel(x, y, colors[i]);
                     bitmap.SetPixel(x, y, Color.FromArgb(255, (i * red) % 255, (i * green) % 255, (i * blue) % 255));
-                    //bitmap.SetPixel(x,y, i < 100 ? Color.FromArgb(i,i,i) : Color.FromArgb(255,255,255));
                 }
             }
-
             pictureBox1.Image = bitmap;
         }
 
@@ -268,32 +229,24 @@ namespace CG
                     hx = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
                     hy = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
                     SizeArea /= ScaleArea;
-                    //button1_Click(null, null);
                     Drow();
                     break;
                 case MouseButtons.Right:
                     x_ = (hx - SizeArea / 2) + x * (SizeArea / size.Width);
                     y_ = (hy - SizeArea / 2) + y * (SizeArea / size.Width);
                     SizeArea *= ScaleArea;
-                    //button1_Click(null, null);
                     Drow();
                     break;
                 default:
                     break;
             }
         }
-
-        public int readRed()
+        private void button2_Click(object sender, EventArgs e)
         {
-            return (int) numericUpDown1.Value;
-        }
-        public int readGreen()
-        {
-            return (int) numericUpDown2.Value;
-        }
-        public int readBlue()
-        {
-            return (int) numericUpDown3.Value;
+            if (colorDialog1.ShowDialog()==DialogResult.OK)
+            {
+                color=colorDialog1.Color;
+            }
         }
     }
 }
