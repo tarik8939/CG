@@ -61,42 +61,44 @@ namespace CG
 
         private void BTN_open_Click(object sender, EventArgs e)
         {
+            Bitmap image;
             openFileDialog1.Filter = "All jpg files(*.jpg)|*.jpg";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                pictureBox1.ImageLocation = openFileDialog1.FileName;
+
+                pictureBox1.Image = (Image) new Bitmap(openFileDialog1.FileName);
             }
+
             Change();
-            var pic = (Bitmap)pictureBox1.Image;
-            // pictureBox1.Height = pic.Height;
-            // MessageBox.Show(pic.Height.ToString());
+
         }
 
         public void Change()
         {
             var size = pictureBox1.Size;
             var pic = (Bitmap)pictureBox1.Image;
-            int r, g, b;
+            byte r, g, b;
             float c;
             float m;
             float y;
             float k;
             var l = 0.5;
             var list = new List<float>();
-
+            
             
             for (int i = 0; i < size.Width; i++)
             {
                 for (int j = 0; j < size.Height; j++)
                 {
-                    //pic.SetPixel(i, j, Color.FromArgb(r,g,b));
                     var rez = RGBtoCMYK(i, j);
-                    MessageBox.Show($"{rez[0]},{rez[1]},{rez[2]},{rez[3]}");
+                     //MessageBox.Show($"{rez[0]}/{rez[1]}/{rez[2]}");
+                     //pic.SetPixel(i, j, Color.FromArgb(255, rez[0], rez[1], rez[2]));
+                    
                 }
             }
         }
 
-        private List<double> RGBtoCMYK(int x, int y)
+        private List<byte> RGBtoCMYK(int x, int y)
         {
             var list = new List<double>();
             var pic = (Bitmap)pictureBox1.Image;
@@ -110,6 +112,22 @@ namespace CG
             list.Add(cyan);
             list.Add(magenta);
             list.Add(yellow);
+            return CMYKtoRGB(cyan,magenta,yellow,black);
+        }
+
+        private List<byte> CMYKtoRGB(double cyan, double magenta, double yellow, double black)
+        {
+            var list = new List<byte>();
+            var color = Convert.ToDouble(textBox1.Text);
+            byte red = Convert.ToByte((1 - Math.Min(1, cyan * (1 - black) + black)) * 255);
+            byte green = Convert.ToByte((1 - Math.Min(1, magenta * (1 - black) + black)) * 255);
+            // byte blue = Convert.ToByte((1 - Math.Min(1, yellow * (1 - black) + black)) * 255);
+            byte blue = Convert.ToByte((1 - Math.Min(1, color * (1 - black) + black)) * 255);
+            //byte blue = Convert.ToByte(color);
+            list.Add(red);
+            list.Add(green);
+            list.Add(blue);
+            //MessageBox.Show($"{red}/{green}/{blue}");
             return list;
         }
     }
