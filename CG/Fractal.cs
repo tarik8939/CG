@@ -29,7 +29,8 @@ namespace CG
         private Size size;
         private double ScaleArea = 4.5;
         private double SizeArea = 4.5;
-        private Color color = Color.Blue;
+        private Color color = Color.Blue; 
+        int maxiter = 10;
 
 
         protected override void OnPaint(PaintEventArgs e)
@@ -112,7 +113,7 @@ namespace CG
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            const int maxiter = 10;
+            //const int maxiter = 10;
             const double cX = 0;
             const double cY = 0;
             int red = color.R;
@@ -146,7 +147,7 @@ namespace CG
         {
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            const int maxiter = 10;
+            //const int maxiter = 10;
             const double cX = 0;
             const double cY = 0;
             int red = color.R;
@@ -201,7 +202,7 @@ namespace CG
             }
         }
 
-        public void Drow()
+        private void Drow()
         {
             if (comboBox1.SelectedIndex == 0)
             {

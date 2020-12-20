@@ -69,5 +69,11 @@ namespace CG
             form.Show();
 
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            ColorModels form = new ColorModels();
+            form.Show();
+        }
     }
 }
