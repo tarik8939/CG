@@ -69,66 +69,162 @@ namespace CG
                 pictureBox1.Image = (Image) new Bitmap(openFileDialog1.FileName);
             }
 
-            Change();
+            var pic = (Bitmap)pictureBox1.Image;
+            richTextBox2.Text += $"Top left-{0},{0}\nTop right-{pic.Width},{0}\nBottom left-{0},{pic.Height}\n" +
+                                 $"Bottom right{pic.Width},{pic.Height}";
 
+
+
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Change();
         }
 
         public void Change()
         {
+            richTextBox1.Clear();
             var size = pictureBox1.Size;
             var pic = (Bitmap)pictureBox1.Image;
-            byte r, g, b;
-            float c;
-            float m;
-            float y;
-            float k;
-            var l = 0.5;
-            var list = new List<float>();
+            double h, l, s;
+            var bitmap = new Bitmap(pic.Width, pic.Height);
             
-            
-            for (int i = 0; i < size.Width; i++)
+            for (int i = 0; i < pic.Width; i++)
             {
-                for (int j = 0; j < size.Height; j++)
+                for (int j = 0; j < pic.Height; j++)
                 {
-                    var rez = RGBtoCMYK(i, j);
-                     //MessageBox.Show($"{rez[0]}/{rez[1]}/{rez[2]}");
-                     //pic.SetPixel(i, j, Color.FromArgb(255, rez[0], rez[1], rez[2]));
-                    
+                     var r = pic.GetPixel(i, j).R;
+                     var g = pic.GetPixel(i, j).G;
+                     var b = pic.GetPixel(i, j).B;
+                     RgbToHsl(r, g, b, out h, out l, out s);
+                     HslToRgb( h, l,  s, ref r,ref g,ref b);
+                     bitmap.SetPixel(i, j, Color.FromArgb(255, (int)r, (int)g, (int)b));
                 }
             }
+
+            pictureBox1.Image = bitmap;
+            CMYKis();
+            HSLis();
+        }
+        public void RgbToHsl(byte r, byte g, byte b,  out double h,  out double l,  out double s)
+        {
+            // Convert RGB to a 0.0 to 1.0 range.
+            double double_r = r / 255.0;
+            double double_g = g / 255.0;
+            double double_b = b / 255.0;
+
+            // Get the maximum and minimum RGB components.
+            double max = double_r;
+            if (max < double_g) max = double_g;
+            if (max < double_b) max = double_b;
+
+            double min = double_r;
+            if (min > double_g) min = double_g;
+            if (min > double_b) min = double_b;
+
+            double diff = max - min;
+            l = (max + min) / 2;
+            if (Math.Abs(diff) < 0.00001)
+            {
+                s = 0;
+                h = 0;  // H is really undefined.
+            }
+            else
+            {
+                if (l <= 0.5) s = diff / (max + min);
+                else s = diff / (2 - max - min);
+
+                double r_dist = (max - double_r) / diff;
+                double g_dist = (max - double_g) / diff;
+                double b_dist = (max - double_b) / diff;
+
+                if (double_r == max) h = b_dist - g_dist;
+                else if (double_g == max) h = 2 + r_dist - b_dist;
+                else h = 4 + g_dist - r_dist;
+
+                h = h * 60;
+                if (h < 0) h += 360;
+            }
+        }
+        public void HslToRgb(double h, double l, double s, ref byte r, ref byte g, ref byte b)
+        {
+            double lielyL = (hScrollBar1.Value);
+            lielyL /= 100;
+            double p2;
+            if (lielyL <= 0.5) p2 = lielyL * (1 + s);
+            else p2 = lielyL + s - lielyL * s;
+
+            double p1 = 2 * lielyL - p2;
+            double double_r, double_g, double_b;
+            if (s == 0)
+            {
+                double_r = lielyL;
+                double_g = lielyL;
+                double_b = lielyL;
+            }
+            else
+            {
+                double_r = QqhToRgb(p1, p2, h + 120);
+                double_g = QqhToRgb(p1, p2, h);
+                double_b = QqhToRgb(p1, p2, h - 120);
+            }
+
+            // Convert RGB to the 0 to 255 range.
+            r = (byte)(double_r * 255.0);
+            g = (byte)(double_g * 255.0);
+            b = (byte)(double_b * 255.0);
+        }
+        private double QqhToRgb(double q1, double q2, double hue)
+        {
+            if (hue > 360) hue -= 360;
+            else if (hue < 0) hue += 360;
+
+            if (hue < 60) return q1 + (q2 - q1) * hue / 60;
+            if (hue < 180) return q2;
+            if (hue < 240) return q1 + (q2 - q1) * (240 - hue) / 60;
+            return q1;
         }
 
-        private List<byte> RGBtoCMYK(int x, int y)
+
+
+        private void CMYKis()
         {
-            var list = new List<double>();
             var pic = (Bitmap)pictureBox1.Image;
-            var r = pic.GetPixel(x, y).R;
-            var g = pic.GetPixel(x, y).G;
-            var b = pic.GetPixel(x, y).B;
+            var r = pic.GetPixel(1, 1).R;
+            var g = pic.GetPixel(1, 1).G;
+            var b = pic.GetPixel(1, 1).B;
             double black = Math.Min(1.0 - r / 255.0,Math.Min(1.0-g/255.0,1.0- b /255.0));
             double cyan = (1.0 - (r / 255.0) - black) / (1.0 - black);
             double magenta = (1.0 - (g / 255.0) - black) / (1.0 - black);
             double yellow = (1.0 - (b / 255.0) - black) / (1.0 - black);
-            list.Add(cyan);
-            list.Add(magenta);
-            list.Add(yellow);
-            return CMYKtoRGB(cyan,magenta,yellow,black);
+
+            richTextBox1.Text += $"CMYK:\n C: {Math.Round(cyan*100,0)}%\nM: {Math.Round(magenta*100,0)}%\n" +
+                                 $"Y: {Math.Round(yellow*100,0)}%\nK: {Math.Round(black*100,0)}%\n";
+
+        }
+        private void HSLis()
+        {
+            var pic = (Bitmap)pictureBox1.Image;
+            var r = pic.GetPixel(1, 1).R;
+            var g = pic.GetPixel(1, 1).G;
+            var b = pic.GetPixel(1, 1).B;
+            double h = 0;
+            double s = 0;
+            double l = 0;
+            RgbToHsl(r,g,b,out h,out l,out s);
+
+            richTextBox1.Text += $"HSL:\n H: {(int)h}%\nS: {(int)s*100}%\n" +
+                                 $"L: {Math.Round(l*100,0)}%\n";
+        }
+        
+        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = hScrollBar1.Value.ToString();
         }
 
-        private List<byte> CMYKtoRGB(double cyan, double magenta, double yellow, double black)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            var list = new List<byte>();
-            var color = Convert.ToDouble(textBox1.Text);
-            byte red = Convert.ToByte((1 - Math.Min(1, cyan * (1 - black) + black)) * 255);
-            byte green = Convert.ToByte((1 - Math.Min(1, magenta * (1 - black) + black)) * 255);
-            // byte blue = Convert.ToByte((1 - Math.Min(1, yellow * (1 - black) + black)) * 255);
-            byte blue = Convert.ToByte((1 - Math.Min(1, color * (1 - black) + black)) * 255);
-            //byte blue = Convert.ToByte(color);
-            list.Add(red);
-            list.Add(green);
-            list.Add(blue);
-            //MessageBox.Show($"{red}/{green}/{blue}");
-            return list;
+            hScrollBar1.Value = Convert.ToInt32(textBox1.Text);
         }
     }
 }
