@@ -15,6 +15,11 @@ namespace CG
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.ResizeRedraw, true);
         }
+
+        private int lx = 0, ly = 0;
+        private int rx =0, ry =0;
+        
+        
         private const int cGrip = 16; // Grip size
         private const int cCaption = 32; // Caption bar height;
         
@@ -106,6 +111,31 @@ namespace CG
             CMYKis();
             HSLis();
         }
+        public void ChangeDistrict()
+        {
+            richTextBox1.Clear();
+            var size = pictureBox1.Size;
+            var pic = (Bitmap)pictureBox1.Image;
+            double h, l, s;
+            var bitmap = new Bitmap(rx-lx, ry-ly);
+            for (int i = lx; i < rx ; i++)
+            {
+                for (int j = ly; j < ry ; j++)
+                {
+                    var r = pic.GetPixel(i, j).R;
+                    var g = pic.GetPixel(i, j).G;
+                    var b = pic.GetPixel(i, j).B;
+                    RgbToHsl(r, g, b, out h, out l, out s);
+                    HslToRgb(h, l, s, ref r, ref g, ref b);
+                    pic.SetPixel(i, j, Color.FromArgb(255, (int)r, (int)g, (int)b));
+                }
+            }
+
+            pictureBox1.Image = pic;
+            CMYKis();
+            HSLis();
+        }
+        
         public void RgbToHsl(byte r, byte g, byte b,  out double h,  out double l,  out double s)
         {
             // Convert RGB to a 0.0 to 1.0 range.
@@ -190,29 +220,26 @@ namespace CG
         private void CMYKis()
         {
             var pic = (Bitmap)pictureBox1.Image;
-            var r = pic.GetPixel(1, 1).R;
-            var g = pic.GetPixel(1, 1).G;
-            var b = pic.GetPixel(1, 1).B;
+            var r = pic.GetPixel(lx, ly).R;
+            var g = pic.GetPixel(lx, ly).G;
+            var b = pic.GetPixel(lx, ly).B;
             double black = Math.Min(1.0 - r / 255.0,Math.Min(1.0-g/255.0,1.0- b /255.0));
             double cyan = (1.0 - (r / 255.0) - black) / (1.0 - black);
             double magenta = (1.0 - (g / 255.0) - black) / (1.0 - black);
             double yellow = (1.0 - (b / 255.0) - black) / (1.0 - black);
-
             richTextBox1.Text += $"CMYK:\n C: {Math.Round(cyan*100,0)}%\nM: {Math.Round(magenta*100,0)}%\n" +
                                  $"Y: {Math.Round(yellow*100,0)}%\nK: {Math.Round(black*100,0)}%\n";
-
         }
         private void HSLis()
         {
             var pic = (Bitmap)pictureBox1.Image;
-            var r = pic.GetPixel(1, 1).R;
-            var g = pic.GetPixel(1, 1).G;
-            var b = pic.GetPixel(1, 1).B;
+            var r = pic.GetPixel(lx, ly).R;
+            var g = pic.GetPixel(lx, ly).G;
+            var b = pic.GetPixel(lx, ly).B;
             double h = 0;
             double s = 0;
             double l = 0;
             RgbToHsl(r,g,b,out h,out l,out s);
-
             richTextBox1.Text += $"HSL:\n H: {(int)h}%\nS: {(int)s*100}%\n" +
                                  $"L: {Math.Round(l*100,0)}%\n";
         }
@@ -225,6 +252,19 @@ namespace CG
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             hScrollBar1.Value = Convert.ToInt32(textBox1.Text);
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            rx = e.X;
+            ry = e.Y;
+            ChangeDistrict();
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            lx = e.X;
+            ly = e.Y;
         }
     }
 }
