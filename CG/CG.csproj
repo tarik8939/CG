@@ -47,6 +47,12 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="AffineTrans.cs">
+          <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="AffineTrans.Designer.cs">
+          <DependentUpon>AffineTrans.cs</DependentUpon>
+        </Compile>
         <Compile Include="ColorModels.cs">
           <SubType>Form</SubType>
         </Compile>
@@ -67,6 +73,9 @@
         </Compile>
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <EmbeddedResource Include="AffineTrans.resx">
+          <DependentUpon>AffineTrans.cs</DependentUpon>
+        </EmbeddedResource>
         <EmbeddedResource Include="ColorModels.resx">
           <DependentUpon>ColorModels.cs</DependentUpon>
         </EmbeddedResource>

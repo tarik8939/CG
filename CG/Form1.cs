@@ -75,5 +75,11 @@ namespace CG
             ColorModels form = new ColorModels();
             form.Show();
         }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+            AffineTrans form = new AffineTrans();
+            form.Show();
+        }
     }
 }

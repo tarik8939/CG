@@ -75,11 +75,7 @@ namespace CG
             }
 
             var pic = (Bitmap)pictureBox1.Image;
-            richTextBox2.Text += $"Top left-{0},{0}\nTop right-{pic.Width},{0}\nBottom left-{0},{pic.Height}\n" +
-                                 $"Bottom right{pic.Width},{pic.Height}";
-
-
-
+            
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -91,23 +87,28 @@ namespace CG
             richTextBox1.Clear();
             var size = pictureBox1.Size;
             var pic = (Bitmap)pictureBox1.Image;
-            double h, l, s;
             var bitmap = new Bitmap(pic.Width, pic.Height);
             
             for (int i = 0; i < pic.Width; i++)
             {
                 for (int j = 0; j < pic.Height; j++)
                 {
-                     var r = pic.GetPixel(i, j).R;
-                     var g = pic.GetPixel(i, j).G;
-                     var b = pic.GetPixel(i, j).B;
-                     RgbToHsl(r, g, b, out h, out l, out s);
-                     HslToRgb( h, l,  s, ref r,ref g,ref b);
-                     bitmap.SetPixel(i, j, Color.FromArgb(255, (int)r, (int)g, (int)b));
+                    var r = (int)pic.GetPixel(i, j).R;
+                    var g = (int)pic.GetPixel(i, j).G;
+                    var b = (int)pic.GetPixel(i, j).B;
+                    double h, l, s;
+                    RgbToHsl(r, g, b, out h, out l, out s);
+                    if (h >= 50.0 && h <= 70.0)
+                    {
+                        s = (double)hScrollBar1.Value / 100;
+                        
+                    }
+                    else if (h >= 225.0 && h <= 255.0) {s = (double)hScrollBar1.Value / 100;}
+                    pic.SetPixel(i, j, HslToRgb(h, s, l));
                 }
             }
 
-            pictureBox1.Image = bitmap;
+            pictureBox1.Image = pic;
             CMYKis();
             HSLis();
         }
@@ -116,18 +117,29 @@ namespace CG
             richTextBox1.Clear();
             var size = pictureBox1.Size;
             var pic = (Bitmap)pictureBox1.Image;
-            double h, l, s;
-            var bitmap = new Bitmap(rx-lx, ry-ly);
-            for (int i = lx; i < rx ; i++)
+            var bitmap = new Bitmap(pic.Width, pic.Height);
+            
+            for (int i = lx; i < rx; i++)
             {
-                for (int j = ly; j < ry ; j++)
+                for (int j = ly; j < ry; j++)
                 {
-                    var r = pic.GetPixel(i, j).R;
-                    var g = pic.GetPixel(i, j).G;
-                    var b = pic.GetPixel(i, j).B;
+                    var r = (int)pic.GetPixel(i, j).R;
+                    var g = (int)pic.GetPixel(i, j).G;
+                    var b = (int)pic.GetPixel(i, j).B;
+                    double h, l, s;
                     RgbToHsl(r, g, b, out h, out l, out s);
-                    HslToRgb(h, l, s, ref r, ref g, ref b);
-                    pic.SetPixel(i, j, Color.FromArgb(255, (int)r, (int)g, (int)b));
+                    if (h >= 50.0 && h <= 70.0)
+                    {
+                        s = (double)hScrollBar1.Value / 100;
+                        pic.SetPixel(i, j, HslToRgb(h, s, l));
+                        
+                    }
+                    else if (h >= 225.0 && h <= 255.0)
+                    {
+                        s = (double)hScrollBar1.Value / 100;
+                        pic.SetPixel(i, j, HslToRgb(h, s, l));
+                    }
+                    
                 }
             }
 
@@ -135,84 +147,95 @@ namespace CG
             CMYKis();
             HSLis();
         }
-        
-        public void RgbToHsl(byte r, byte g, byte b,  out double h,  out double l,  out double s)
+        public void RgbToHsl(int r, int g, int b, out double h, out double l, out double s)
         {
-            // Convert RGB to a 0.0 to 1.0 range.
-            double double_r = r / 255.0;
-            double double_g = g / 255.0;
-            double double_b = b / 255.0;
 
-            // Get the maximum and minimum RGB components.
-            double max = double_r;
-            if (max < double_g) max = double_g;
-            if (max < double_b) max = double_b;
+            double _r = (r / 255.0);
+            double _g = (g / 255.0);
+            double _b = (b / 255.0);
 
-            double min = double_r;
-            if (min > double_g) min = double_g;
-            if (min > double_b) min = double_b;
+            double min = Math.Min(Math.Min(_r, _g), _b);
+            double max = Math.Max(Math.Max(_r, _g), _b);
+            double delta = max - min;
 
-            double diff = max - min;
             l = (max + min) / 2;
-            if (Math.Abs(diff) < 0.00001)
+
+            if (delta == 0)
             {
-                s = 0;
-                h = 0;  // H is really undefined.
+                h = 0;
+                s = 0.0;
             }
             else
             {
-                if (l <= 0.5) s = diff / (max + min);
-                else s = diff / (2 - max - min);
+                s = (l <= 0.5) ? (delta / (max + min)) : (delta / (2 - max - min));
 
-                double r_dist = (max - double_r) / diff;
-                double g_dist = (max - double_g) / diff;
-                double b_dist = (max - double_b) / diff;
+                double hue;
 
-                if (double_r == max) h = b_dist - g_dist;
-                else if (double_g == max) h = 2 + r_dist - b_dist;
-                else h = 4 + g_dist - r_dist;
+                if (_r == max)
+                {
+                    hue = ((_g - _b) / 6) / delta;
+                }
+                else if (_g == max)
+                {
+                    hue = (1.0 / 3) + ((_b - _r) / 6) / delta;
+                }
+                else
+                {
+                    hue = (2.0 / 3) + ((_r - _g) / 6) / delta;
+                }
 
-                h = h * 60;
-                if (h < 0) h += 360;
+                if (hue < 0)
+                    hue += 1;
+                if (hue > 1)
+                    hue -= 1;
+
+                h = (hue * 360);
             }
         }
-        public void HslToRgb(double h, double l, double s, ref byte r, ref byte g, ref byte b)
-        {
-            double lielyL = (hScrollBar1.Value);
-            lielyL /= 100;
-            double p2;
-            if (lielyL <= 0.5) p2 = lielyL * (1 + s);
-            else p2 = lielyL + s - lielyL * s;
 
-            double p1 = 2 * lielyL - p2;
-            double double_r, double_g, double_b;
-            if (s == 0)
+        public  Color HslToRgb(double h, double s, double l)
+        {
+            double r = 0, g = 0, b = 0;
+            if (l != 0)
             {
-                double_r = lielyL;
-                double_g = lielyL;
-                double_b = lielyL;
+                if (s == 0)
+                    r = g = b = l;
+                else
+                {
+                    double temp2;
+                    double hue = h / 360;
+                    if (l < 0.5)
+                        temp2 = l * (1.0 + s);
+                    else
+                        temp2 = l + s - (l * s);
+
+                    double temp1 = 2.0 * l - temp2;
+
+                    r = GetColorComponent(temp1, temp2, hue + (1.0 / 3.0));
+                    g = GetColorComponent(temp1, temp2, hue);
+                    b = GetColorComponent(temp1, temp2, hue - (1.0 / 3.0));
+                }
             }
+
+            return Color.FromArgb((int) (255 * r), (int) (255 * g), (int) (255 * b));
+        }
+
+        private double GetColorComponent(double temp1, double temp2, double temp3)
+        {
+            if (temp3 < 0.0)
+                temp3 += 1.0; 
+            else if (temp3 > 1.0)
+                temp3 -= 1.0;
+
+            if (temp3 < 1.0 / 6.0)
+                return temp1 + (temp2 - temp1) * 6.0 * temp3;
+            else if (temp3 < 0.5)
+                return temp2;
+            else if (temp3 < 2.0 / 3.0)
+                return temp1 + ((temp2 - temp1) * ((2.0 / 3.0) - temp3) * 6.0);
+           
             else
-            {
-                double_r = QqhToRgb(p1, p2, h + 120);
-                double_g = QqhToRgb(p1, p2, h);
-                double_b = QqhToRgb(p1, p2, h - 120);
-            }
-
-            // Convert RGB to the 0 to 255 range.
-            r = (byte)(double_r * 255.0);
-            g = (byte)(double_g * 255.0);
-            b = (byte)(double_b * 255.0);
-        }
-        private double QqhToRgb(double q1, double q2, double hue)
-        {
-            if (hue > 360) hue -= 360;
-            else if (hue < 0) hue += 360;
-
-            if (hue < 60) return q1 + (q2 - q1) * hue / 60;
-            if (hue < 180) return q2;
-            if (hue < 240) return q1 + (q2 - q1) * (240 - hue) / 60;
-            return q1;
+                return temp1;
         }
 
 

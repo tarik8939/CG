@@ -39,7 +39,6 @@ namespace CG
             this.button1 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,6 +64,7 @@ namespace CG
             this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(807, 682);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
@@ -116,21 +116,12 @@ namespace CG
             this.hScrollBar1.TabIndex = 9;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Location = new System.Drawing.Point(894, 44);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(181, 96);
-            this.richTextBox2.TabIndex = 10;
-            this.richTextBox2.Text = "";
-            // 
             // ColorModels
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int) (((byte) (50)))), ((int) (((byte) (160)))), ((int) (((byte) (250)))));
             this.ClientSize = new System.Drawing.Size(1214, 706);
-            this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.hScrollBar1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button1);
@@ -145,8 +136,6 @@ namespace CG
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
-        private System.Windows.Forms.RichTextBox richTextBox2;
 
         private System.Windows.Forms.HScrollBar hScrollBar1;
 
